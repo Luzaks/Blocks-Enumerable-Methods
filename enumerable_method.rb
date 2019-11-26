@@ -6,25 +6,30 @@ module Enumerable #:nodoc:
   def my_each
     return to_enum unless block_given?
 
-    i = 0
-    while i <= length - 1
-      yield(self[i])
-      i += 1
+    if block_given?
+      i = 0
+      while i <= length - 1
+        yield(self[i])
+        i += 1
+      end
+    else puts "You didn't send a block"
     end
     self
   end
 
   # each_with_index method
 
-  def each_with_index
+  def my_each_with_index
     return to_enum(:my_each_with_index) unless block_given?
 
-    i = 0
-    while i <= length - 1
-      yield(self[i], i)
-      i += 1
+    if block_given?
+      i = 0
+      while i <= length - 1
+        yield(self[i], i)
+        i += 1
+      end
+    else puts "You didn't send a block"
     end
-    self
   end
 
   # my_select method
@@ -42,26 +47,32 @@ module Enumerable #:nodoc:
 
   # my_all method
 
-  def my_all?
+  def my_all?(arg = nil)
     arr = self
-    arr.my_each do |x|
-      return true unless block_given?
-
-      item = yield(x)
-      return false unless item
+    if block_given? && arg.nil?
+      arr.my_each { |item| return false unless yield(item) == true }
+    elsif arg.class == Class
+      arr.my_each { |item| return false unless item.is_a?(arg) }
+    elsif arg.is_a?(Regexp)
+      arr.my_each { |item| return false unless item =~ arg }
+    else
+      arr.my_each { |item| return false unless item == arg }
     end
     true
   end
 
   # my_any? method
 
-  def my_any?
-    p arr = self
-    arr.my_each do |x|
-      return true unless block_given?
-
-      item = yield(x)
-      return true if item
+  def my_any?(arg = nil)
+    arr = self
+    if block_given? && arg.nil?
+      arr.my_each { |item| return true if yield(item) == true }
+    elsif arg.class == Class
+      arr.my_each { |item| return true if item.is_a?(arg) }
+    elsif arg.is_a?(Regexp)
+      arr.my_each { |item| return true if item =~ arg }
+    else
+      arr.my_each { |item| return true if item == arg }
     end
     false
   end
@@ -127,3 +138,10 @@ module Enumerable #:nodoc:
     result
   end
 end
+
+p(%w[ant bear cat].my_any?{|word| word.length < 3})
+p(%w[ant bear cat].my_any?(/d/))
+p([3, 3, 3].my_any?(3))
+p([1, 2i, 3.14].my_any?(Numeric))
+p([nil, true, 9].my_any?)
+p([].my_any?)
