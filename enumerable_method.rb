@@ -79,13 +79,16 @@ module Enumerable #:nodoc:
 
   # my_none? method
 
-  def my_none?
-    p arr = self
-    arr.my_each do |x|
-      return true unless block_given?
-
-      item = yield(x)
-      return false if item
+  def my_none?(arg = nil)
+    arr = self
+    if block_given? && arg.nil?
+      arr.my_each { |item| return false if yield(item) }
+    elsif arg.class == Class
+      arr.my_each { |item| return false if item.is_a?(arg) }
+    elsif arg.class == Regexp
+      arr.my_each { |item| return false if item =~ arg }
+    else
+      arr.my_each { |item| return false if item == arg }
     end
     true
   end
@@ -139,9 +142,3 @@ module Enumerable #:nodoc:
   end
 end
 
-p(%w[ant bear cat].my_any?{|word| word.length < 3})
-p(%w[ant bear cat].my_any?(/d/))
-p([3, 3, 3].my_any?(3))
-p([1, 2i, 3.14].my_any?(Numeric))
-p([nil, true, 9].my_any?)
-p([].my_any?)
