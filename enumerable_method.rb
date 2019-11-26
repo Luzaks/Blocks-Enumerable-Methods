@@ -50,13 +50,11 @@ module Enumerable #:nodoc:
   def my_all?(arg = nil)
     arr = self
     if block_given? && arg.nil?
-      arr.my_each { |item| return false unless yield(item) == true }
-    elsif arg.class == Class
-      arr.my_each { |item| return false unless item.is_a?(arg) }
-    elsif arg.is_a?(Regexp)
-      arr.my_each { |item| return false unless item =~ arg }
-    else
-      arr.my_each { |item| return false unless item == arg }
+      arr.my_each { |item| return false unless item == true }
+    elsif arg
+      arr.my_each { |item| return false unless clases(item, arg) }
+    elsif !block_given? && arg.nil?
+      return false
     end
     true
   end
@@ -67,12 +65,8 @@ module Enumerable #:nodoc:
     arr = self
     if block_given? && arg.nil?
       arr.my_each { |item| return true if yield(item) == true }
-    elsif arg.class == Class
-      arr.my_each { |item| return true if item.is_a?(arg) }
-    elsif arg.is_a?(Regexp)
-      arr.my_each { |item| return true if item =~ arg }
-    else
-      arr.my_each { |item| return true if item == arg }
+    elsif !block_given? && arg
+      arr.my_each { |item| return true if clases(item, arg) }
     end
     false
   end
@@ -83,27 +77,30 @@ module Enumerable #:nodoc:
     arr = self
     if block_given? && arg.nil?
       arr.my_each { |item| return false if yield(item) }
-    elsif arg.class == Class
-      arr.my_each { |item| return false if item.is_a?(arg) }
-    elsif arg.class == Regexp
-      arr.my_each { |item| return false if item =~ arg }
-    else
-      arr.my_each { |item| return false if item == arg }
+    elsif !block_given? && input
+      arr.my_each { |item| return false if clases(item, arg) }
     end
     true
   end
 
   # my_count method
-  def my_count
-    p arr = self
-    elements = 0
-    elements += 1 while elements < arr.length
-    elements
+  def my_count(arg = nil)
+    counter = 0
+    my_each do |item|
+      if block_given? && arg.nil?
+        counter += 1 if yield(item)
+      elsif item && arg.nil?
+        counter += 1
+      elsif clases(item, arg) && arg.is_a?(Integer)
+        counter += 1
+      end
+    end
+    counter
   end
 
   # my_map method
 
-  def my_map(&my_proc)
+  def my_map
     return to_enum(:my_map) unless block_given?
 
     arr = self
@@ -111,7 +108,7 @@ module Enumerable #:nodoc:
     if block_given?
       arr.my_each { |x| map_arr.push(yield(arr[x])) }
     else
-      arr.my_each { |x| map_arr << my_proc.call(arr[x]) }
+      arr.my_each { |x| map_arr << proc.call(arr[x]) if block_given?}
     end
     map_arr
   end
@@ -130,15 +127,28 @@ module Enumerable #:nodoc:
     result
   end
 
-  # multiply_els
+  # Matching classes in input
 
-  def multiply_els
-    arr = self
-    result = 0
-    arr.my_inject do |x, y|
-      result = yield(x, y)
+  def clases(item, arg)
+    if arg.class == Regexp
+      return true if item.to_s.match(arg)
+    elsif arg.class == Class
+      return true if item.instance_of? arg
+    elsif arg.class == String || arg.class == Integer || arg.class == Symbol
+      return true if item == arg
     end
-    result
   end
 end
 
+# multiply_els for testing my_map method
+
+def multiply_els
+  arr = self
+  result = 0
+  arr.my_inject do |x, y|
+    result = yield(x, y)
+  end
+  result
+end
+
+p((1..4).my_map { |i| i*i })
