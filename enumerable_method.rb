@@ -131,7 +131,6 @@ module Enumerable #:nodoc:
       return true if item == arg
     end
   end
-
 end
 
 # multiply_els for testing my_map method
