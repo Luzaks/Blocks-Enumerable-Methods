@@ -6,13 +6,10 @@ module Enumerable #:nodoc:
   def my_each
     return to_enum unless block_given?
 
-    if block_given?
-      i = 0
-      while i <= length - 1
-        yield(self[i])
-        i += 1
-      end
-    else puts "You didn't send a block"
+    i = 0
+    while i < size
+      yield(to_a[i])
+      i += 1
     end
     self
   end
@@ -22,13 +19,10 @@ module Enumerable #:nodoc:
   def my_each_with_index
     return to_enum(:my_each_with_index) unless block_given?
 
-    if block_given?
-      i = 0
-      while i <= length - 1
-        yield(self[i], i)
-        i += 1
-      end
-    else puts "You didn't send a block"
+    i = 0
+    while i <= length - 1
+      yield(self[i], i)
+      i += 1
     end
   end
 
@@ -38,9 +32,11 @@ module Enumerable #:nodoc:
     return to_enum(:my_select) unless block_given?
 
     select = []
-    my_each do |x|
-      element = yield(x)
-      select << x if element == true
+    if block_given?
+      my_each do |x|
+        element = yield(x)
+        select << x if element == true
+      end
     end
     select
   end
@@ -103,12 +99,9 @@ module Enumerable #:nodoc:
   def my_map
     return to_enum(:my_map) unless block_given?
 
-    arr = self
     map_arr = []
-    if block_given?
-      arr.my_each { |x| map_arr.push(yield(arr[x])) }
-    else
-      arr.my_each { |x| map_arr << proc.call(arr[x]) if block_given?}
+    my_each do |x|
+      map_arr << yield(x) || map_arr << proc.call(x) if block_given?
     end
     map_arr
   end
@@ -150,5 +143,3 @@ def multiply_els
   end
   result
 end
-
-p((1..4).my_map { |i| i*i })
