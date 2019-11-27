@@ -50,7 +50,7 @@ module Enumerable #:nodoc:
     elsif arg
       arr.my_each { |item| return false unless clases(item, arg) }
     elsif !block_given? && arg.nil?
-      return false
+      arr.my_each { |item| return false unless item }
     end
     true
   end
@@ -59,8 +59,8 @@ module Enumerable #:nodoc:
 
   def my_any?(arg = nil)
     arr = self
-    if block_given? && arg.nil?
-      arr.my_each { |item| return true if yield(item) == true }
+    if !block_given? && arg.nil?
+      arr.my_each { |item| return true if item }
     elsif !block_given? && arg
       arr.my_each { |item| return true if clases(item, arg) }
     end
@@ -71,9 +71,9 @@ module Enumerable #:nodoc:
 
   def my_none?(arg = nil)
     arr = self
-    if block_given? && arg.nil?
-      arr.my_each { |item| return false if yield(item) }
-    elsif !block_given? && input
+    if !block_given? && arg.nil?
+      arr.my_each { |item| return false if item }
+    elsif !block_given? && arg
       arr.my_each { |item| return false if clases(item, arg) }
     end
     true
@@ -131,15 +131,16 @@ module Enumerable #:nodoc:
       return true if item == arg
     end
   end
+
 end
 
 # multiply_els for testing my_map method
 
-def multiply_els
-  arr = self
-  result = 0
-  arr.my_inject do |x, y|
-    result = yield(x, y)
+def multiply_els(arr)
+  multiplied_arr = arr
+  multiplied_arr.my_inject do |x, y|
+    x * y
   end
-  result
 end
+
+p(multiply_els([2, 4, 5]))
