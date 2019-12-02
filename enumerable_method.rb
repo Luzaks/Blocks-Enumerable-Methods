@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Enumerable #:nodoc:
-  # my_each method
 
   def my_each
     return to_enum unless block_given?
@@ -14,8 +13,6 @@ module Enumerable #:nodoc:
     self
   end
 
-  # each_with_index method
-
   def my_each_with_index
     return to_enum(:my_each_with_index) unless block_given?
 
@@ -26,8 +23,6 @@ module Enumerable #:nodoc:
     end
     self
   end
-
-  # my_select method
 
   def my_select
     return to_enum(:my_select) unless block_given?
@@ -41,8 +36,6 @@ module Enumerable #:nodoc:
     end
     select
   end
-
-  # my_all method
 
   def my_all?(arg = nil)
     arr = self
@@ -60,8 +53,6 @@ module Enumerable #:nodoc:
     true
   end
 
-  # my_any? method
-
   def my_any?(arg = nil)
     arr = self
     if block_given? && arg.nil?
@@ -77,8 +68,6 @@ module Enumerable #:nodoc:
     end
     false
   end
-
-  # my_none? method
 
   def my_none?(arg = nil)
     arr = self
@@ -96,8 +85,6 @@ module Enumerable #:nodoc:
     true
   end
 
-  # my_count method
-
   def my_count(arg = nil)
     counter = 0
     my_each do |item|
@@ -112,8 +99,6 @@ module Enumerable #:nodoc:
     counter
   end
 
-  # my_map method
-
   def my_map
     return to_enum(:my_map) unless block_given?
 
@@ -123,8 +108,6 @@ module Enumerable #:nodoc:
     end
     map_arr
   end
-
-  # my_inject
 
   def my_inject(xhi = nil, phi = nil)
     arr = self
@@ -154,8 +137,6 @@ module Enumerable #:nodoc:
     symbol
   end
 
-  # Matching classes in input
-
   def clases(alpha, arg)
     if arg.is_a?(Regexp)
       return true if alpha.to_s.match(arg)
@@ -166,8 +147,6 @@ module Enumerable #:nodoc:
     end
   end
 end
-
-# multiply_els for testing my_inject method
 
 def multiply_els(arr)
   multiplied_arr = arr
