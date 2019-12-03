@@ -100,4 +100,54 @@ RSpec.describe Enumerable do
       expect(%w[ant bear cat].my_any?(/n/)).to eql(%w[ant bear cat].any?(/n/))
     end
   end
+
+  describe "#my_none?" do
+    it "return true when none of the numbers are greater than 6" do
+      expect([1, 2, 5, 3, 1].my_none? { |x| x > 6 }).to be_truthy
+    end
+
+    it "return false when some of the numbers are greater than 6" do
+      expect([10, 50, 2, 40, 4].my_none? { |x| x > 6 }).to be_falsy
+    end
+
+    it "return true if its equal as none? method" do
+      expect([10, 20, 20, 40, 50].my_none? { |x| x > 6 }).to eql([10, 20, 20, 40, 50].none? { |x| x > 6 })
+    end
+
+    it "return false if at some one of the elements in an array are true" do
+      expect([nil, false, true].my_none?).to be_falsy
+    end
+
+    it "return true if all the elements of the array are false" do
+      expect([false, false, false].my_none?).to be_truthy
+    end
+
+    it "return true if its equal as none? method" do
+      expect([nil, true, true].my_none?).to eql([nil, true, true].none?)
+    end
+
+    it "return true if none the elements has the same class" do
+      expect([1245, nil, [1, 2]].my_none?(String)).to be_truthy
+    end
+
+    it "return false if some of the elements has the same class" do
+      expect([13123, false, "431321"].my_none?(Integer)).to be_falsy
+    end
+
+    it "return true if is equal to none? method" do
+      expect([13123, nil, 431321].my_none?(Integer)).to eql([13123, nil, 431321].none?(Integer))
+    end
+
+    it "return true if  none the elements contains the  letter" do
+      expect(%w[ant bear cat].my_none?(/z/)).to be_truthy
+    end
+
+    it "return false if some of the elements contains the  letter" do
+      expect(%w[ant bear cat].my_all?(/b/)).to be_falsy
+    end
+
+    it "return true if is equal to none? method" do
+      expect(%w[ant bear cat].my_none?(/m/)).to eql(%w[ant bear cat].none?(/m/))
+    end
+  end
 end
