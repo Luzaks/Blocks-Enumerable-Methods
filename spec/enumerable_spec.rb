@@ -150,4 +150,23 @@ RSpec.describe Enumerable do
       expect(%w[ant bear cat].my_none?(/m/)).to eql(%w[ant bear cat].none?(/m/))
     end
   end
+  
+  describe "#my_count" do
+
+    it 'Compare if it\'s equal to count method' do
+      expect([6, 7, 8, 9, 1].my_count { |x| x > 3 }).to eql([6, 7, 8, 9, 1].count { |x| x > 3 })
+    end
+
+    it 'Compare if it\'s equal to count method' do
+      expect((1...6).my_count(3)).to eql((1...6).count(3))
+    end
+
+    it 'Compare if it\'s equal to count method' do
+      expect((1...5).my_count).to eql((1...5).count)
+    end
+
+    it 'Compare if it\'s equal to zero' do
+      expect([].my_count).to eql(0)
+    end
+  end
 end
