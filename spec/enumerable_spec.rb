@@ -150,9 +150,8 @@ RSpec.describe Enumerable do
       expect(%w[ant bear cat].my_none?(/m/)).to eql(%w[ant bear cat].none?(/m/))
     end
   end
-  
-  describe "#my_count" do
 
+  describe "#my_count" do
     it 'Compare if it\'s equal to count method' do
       expect([6, 7, 8, 9, 1].my_count { |x| x > 3 }).to eql([6, 7, 8, 9, 1].count { |x| x > 3 })
     end
@@ -167,6 +166,44 @@ RSpec.describe Enumerable do
 
     it 'Compare if it\'s equal to zero' do
       expect([].my_count).to eql(0)
+    end
+  end
+
+  describe "#my_inject" do
+    it 'Add the sum of an array plus 2' do
+      expect([1, 3, 3, 4, 5].my_inject(2) { |m, e| m + e }).to eql(18)
+    end
+
+    it 'Compare if its equal to inject' do
+      expect([1, 3, 3, 4, 5].my_inject(2) { |m, e| m + e }).to eql([1, 3, 3, 4, 5].inject(2) { |m, e| m + e })
+    end
+
+    it 'Multiplies the elements of an array times 2' do
+      expect([1, 3, 3, 4, 5].my_inject(2, :*)).to eql(360)
+    end
+
+    it 'Compare if its equal to inject' do
+      expect([1, 3, 3, 4, 5].my_inject(2, :*)).to eql([1, 3, 3, 4, 5].inject(2, :*))
+    end
+
+    it 'Add the sum of an array using a symbol' do
+      expect([1, 3, 3, 4, 5].my_inject(:+)).to eql(16)
+    end
+
+    it 'Compare if its equal to inject' do
+      expect([1, 3, 3, 4, 5].my_inject(:+)).to eql([1, 3, 3, 4, 5].inject(:+))
+    end
+
+    it 'Look for the word with the biggest length' do
+      expect(%w{cat sheep bear}.my_inject { |memo, word| memo.length > word.length ? memo : word }).to eql('sheep')
+    end
+
+    it 'Multiply by two everything in a range' do
+      expect((1..5).my_inject(2) { |product, n| product * n }).to eql(240)
+    end
+
+    it 'Compare if its equal to inject' do
+      expect((1..5).my_inject(2) { |product, n| product * n }).to eql((1..5).inject(2) { |product, n| product * n })
     end
   end
 end
