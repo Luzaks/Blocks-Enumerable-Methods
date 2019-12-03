@@ -206,4 +206,30 @@ RSpec.describe Enumerable do
       expect((1..5).my_inject(2) { |product, n| product * n }).to eql((1..5).inject(2) { |product, n| product * n })
     end
   end
+
+  describe '#my_select' do
+    it 'Compares if it\'s equal to select method.' do
+      expect([2, 3, 1, 9, 7].my_select { |x| x > 3 }).to eql([2, 3, 1, 9, 7].select { |x| x > 3 })
+    end
+
+    it 'Compares if the range it\'s equal to select method.' do
+      expect((1..7).my_select { |x| x > 3 }).to eql((1..7).select { |x| x > 3 })
+    end
+
+    it 'Returns an enumerator if no block is given' do
+      expect((1..7).my_select).to be_kind_of(Enumerator)
+    end
+
+    it 'Returns an enumerator if no block is given' do
+      expect([2, 3, 1, 9, 7].my_select).to be_kind_of(Enumerator)
+    end
+
+    it "Returns the elements that pass the test of the block. " do
+      expect([1, 2, 3, 7].my_select { |element| element > 2 }).to eql([3, 7])
+    end
+
+    it "Return the value that we asked for in the block." do
+      expect({ 1 => "one", 2 => "two" }.my_select { |pair| pair[0] == 2 }).to eql([[2, "two"]])
+    end
+  end
 end
